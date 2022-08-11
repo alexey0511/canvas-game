@@ -1,0 +1,19 @@
+{
+  "name": "canvas-airhockey",
+  "description": "Multiplayer sample app",
+  "author": "Alexey <om.alex@hotmail.com>",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "nodemon src/server.ts"
+  },
+  "dependencies": {
+    "express": "~4.8.4",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.6.5",
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1"
+  }
+}
