@@ -4,7 +4,9 @@
   "author": "Alexey <om.alex@hotmail.com>",
   "version": "0.0.1",
   "scripts": {
-    "start": "nodemon src/server.ts"
+    "start": "npm run start:client && npm run start:server",
+    "start:client": "tsc -p ./src/client/tsconfig.client.json -w",
+    "start:server": "nodemon src/server.ts"
   },
   "dependencies": {
     "express": "~4.8.4",

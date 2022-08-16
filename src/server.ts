@@ -33,9 +33,9 @@ const server = app.listen(PORT, function () {
 });
 
 // ROUTING
-app.use("/resources", express.static(__dirname + "/client"));
+app.use("/resources", express.static(__dirname + "/public"));
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/client/canvas.html");
+  res.sendFile(__dirname + "/public/canvas.html");
 });
 
 // THE APP
