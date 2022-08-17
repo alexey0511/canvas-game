@@ -1,5 +1,6 @@
-import express, { Application } from "express";
-import { Server } from "socket.io";
+/* eslint-disable no-param-reassign */
+import express, { Application } from 'express';
+import { Server } from 'socket.io';
 
 // TYPES
 export type Coords = {
@@ -39,14 +40,14 @@ const config = {
 };
 
 const { CANVAS_HEIGHT, CANVAS_WIDTH, RADIUS } = config;
-const server = app.listen(PORT, function () {
+const server = app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
 // ROUTING
-app.use("/resources", express.static(__dirname + "/public"));
-app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/public/canvas.html");
+app.use('/resources', express.static(`${__dirname}/public`));
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/public/canvas.html`);
 });
 
 // THE APP
@@ -75,18 +76,19 @@ function updatePuckPosition(puck: Puck, players: Player[]) {
 
   const { y } = puck.speed;
   if (puck.speed.y !== 0) {
-    puck.speed.y =
-      y > 0 ? y - config.SPEED_SLOWING_RATE : y + config.SPEED_SLOWING_RATE;
+    puck.speed.y = y > 0 ? y - config.SPEED_SLOWING_RATE : y + config.SPEED_SLOWING_RATE;
   }
 
   // detect collision
   // TODO: might need more complicated formula for reflection
 
   // walls
-  if (puck.pos.x > CANVAS_WIDTH - RADIUS || puck.pos.x < RADIUS)
+  if (puck.pos.x > CANVAS_WIDTH - RADIUS || puck.pos.x < RADIUS) {
     puck.speed.x = -puck.speed.x;
-  if (puck.pos.y > CANVAS_HEIGHT - RADIUS || puck.pos.y < RADIUS)
+  }
+  if (puck.pos.y > CANVAS_HEIGHT - RADIUS || puck.pos.y < RADIUS) {
     puck.speed.y = -puck.speed.y;
+  }
 
   // players
   players.forEach((player) => {
@@ -125,7 +127,7 @@ function makePlayer(playerId: string, playersNum: number) {
   return {
     id: playerId,
     name: `Player ${playersNum}`,
-    color: "green",
+    color: 'green',
     coords: { x: playersNum * 10, y: playersNum * 20 },
     force: { x: 0, y: 0 },
   };
@@ -134,12 +136,12 @@ function makePlayer(playerId: string, playersNum: number) {
 // SOCKET COMMUNICATIONS
 const io = new Server(server);
 
-io.sockets.on("connection", function (socket) {
-  const player = makePlayer(socket.id, state.players.length);
-  state.players.push(player);
+io.sockets.on('connection', (socket) => {
+  const newPlayer = makePlayer(socket.id, state.players.length);
+  state.players.push(newPlayer);
 
-  socket.emit("setPlayer", {
-    name: player.name,
+  socket.emit('setPlayer', {
+    name: newPlayer.name,
   });
 
   setInterval(() => {
@@ -150,10 +152,10 @@ io.sockets.on("connection", function (socket) {
         pos: updatePuckPosition(state.puck, state.players),
       },
     };
-    socket.emit("stateUpdate", state);
+    socket.emit('stateUpdate', state);
   }, config.REFRESH_RATE);
 
-  socket.on("playerMove", (data: any) => {
+  socket.on('playerMove', (data: any) => {
     state.players.forEach((player) => {
       if (player.id === data.id) {
         player.force = {
@@ -165,7 +167,7 @@ io.sockets.on("connection", function (socket) {
     });
   });
 
-  socket.on("disconnect", (reason) => {
+  socket.on('disconnect', () => {
     state.players = state.players.filter((p) => p.id !== socket.id);
   });
 });

@@ -35,7 +35,11 @@ type State = {
 // namespace, to keep funcs together
 const App: any = {
   config: {
-    canvasId: "game-canvas",
+    canvasId: 'game-canvas',
+    server: {
+      url: 'http://localhost',
+      port: '8000',
+    },
     canvasSize: {
       height: 400,
       width: 800,
@@ -51,11 +55,9 @@ App.setPlayer = function (player: Player) {
 };
 
 App.drawPlayer = function (coords: Coords, color: string) {
-  const canvas = document.getElementById(
-    App.config.canvasId
-  ) as HTMLCanvasElement;
+  const canvas = document.getElementById(App.config.canvasId) as HTMLCanvasElement;
   if (canvas) {
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
 
     if (context) {
       context.beginPath();
@@ -78,23 +80,14 @@ App.redrawFromState = function (state: State) {
 };
 
 App.drawPuck = function (puck: Puck) {
-  const canvas = document.getElementById(
-    App.config.canvasId
-  ) as HTMLCanvasElement;
+  const canvas = document.getElementById(App.config.canvasId) as HTMLCanvasElement;
   if (canvas) {
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
 
     if (context) {
       context.beginPath();
-      context.arc(
-        puck.pos.x,
-        puck.pos.y,
-        App.config.radius,
-        0,
-        2 * Math.PI,
-        false
-      );
-      context.fillStyle = "red";
+      context.arc(puck.pos.x, puck.pos.y, App.config.radius, 0, 2 * Math.PI, false);
+      context.fillStyle = 'red';
       context.fill();
       context.closePath();
     }
@@ -102,41 +95,34 @@ App.drawPuck = function (puck: Puck) {
 };
 
 App.clear = function () {
-  const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
+  const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 
   if (!canvas) return;
-  const context = canvas.getContext("2d");
+  const context = canvas.getContext('2d');
 
   if (!context) return;
-  context.clearRect(
-    0,
-    0,
-    App.config.canvasSize.width,
-    App.config.canvasSize.height
-  );
+  context.clearRect(0, 0, App.config.canvasSize.width, App.config.canvasSize.height);
 };
 
-let debounceTimeoutId: NodeJS.Timeout;
+let debounceTimeoutId: ReturnType<typeof setTimeout>;
 
-document
-  .getElementById("game-canvas")!
-  .addEventListener("mousemove", function (e: MouseEvent) {
-    clearTimeout(debounceTimeoutId);
+document.getElementById('game-canvas')!.addEventListener('mousemove', function (e: MouseEvent) {
+  clearTimeout(debounceTimeoutId);
 
-    debounceTimeoutId = setTimeout(() => {
-      App.socket.emit("playerMove", {
-        id: App.socket.id,
-        position: {
-          x: e.pageX - this.offsetLeft,
-          y: e.pageY - this.offsetTop,
-        },
-      });
-    }, 16);
-  });
+  debounceTimeoutId = setTimeout(() => {
+    App.socket.emit('playerMove', {
+      id: App.socket.id,
+      position: {
+        x: e.pageX - this.offsetLeft,
+        y: e.pageY - this.offsetTop,
+      },
+    });
+  }, 16);
+});
 
 // SOCKET COMMUNICATION
 // TODO: declare global io module or maybe just include as part of script
 // @ts-expect-error need to register module
-App.socket = io.connect("http://localhost:8000"); // NOTE: hardcoded PORT (needs to change)
-App.socket.on("stateUpdate", App.redrawFromState);
-App.socket.on("setPlayer", App.setPlayer);
+App.socket = io.connect(`${App.config.server.url}:${App.config.server.port}`); // eslint-disable-line
+App.socket.on('stateUpdate', App.redrawFromState);
+App.socket.on('setPlayer', App.setPlayer);
