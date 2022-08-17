@@ -1,10 +1,10 @@
 // NOTE:
 // script is Work in Progress
-// TODO: 
+// TODO:
 /**
  * NOTE: script is work in progress
- * 
- * TODO: 
+ *
+ * TODO:
  *  - tidy up layout
  *  - import types rather than hardcode
  *  - import or declare socket.io script
@@ -22,8 +22,13 @@ type Player = {
   coords: Coords;
 };
 
+type Puck = {
+  pos: Coords;
+  speed: Coords;
+};
+
 type State = {
-  puck: Coords;
+  puck: Puck;
   players: Player[];
 };
 
@@ -72,7 +77,7 @@ App.redrawFromState = function (state: State) {
   });
 };
 
-App.drawPuck = function ({ x, y }: Coords) {
+App.drawPuck = function (puck: Puck) {
   const canvas = document.getElementById(
     App.config.canvasId
   ) as HTMLCanvasElement;
@@ -81,7 +86,14 @@ App.drawPuck = function ({ x, y }: Coords) {
 
     if (context) {
       context.beginPath();
-      context.arc(x, y, App.config.radius, 0, 2 * Math.PI, false);
+      context.arc(
+        puck.pos.x,
+        puck.pos.y,
+        App.config.radius,
+        0,
+        2 * Math.PI,
+        false
+      );
       context.fillStyle = "red";
       context.fill();
       context.closePath();
@@ -104,16 +116,22 @@ App.clear = function () {
   );
 };
 
+let debounceTimeoutId: NodeJS.Timeout;
+
 document
   .getElementById("game-canvas")!
   .addEventListener("mousemove", function (e: MouseEvent) {
-    App.socket.emit("playerMove", {
-      id: App.socket.id,
-      position: {
-        x: e.pageX - this.offsetLeft,
-        y: e.pageY - this.offsetTop,
-      },
-    });
+    clearTimeout(debounceTimeoutId);
+
+    debounceTimeoutId = setTimeout(() => {
+      App.socket.emit("playerMove", {
+        id: App.socket.id,
+        position: {
+          x: e.pageX - this.offsetLeft,
+          y: e.pageY - this.offsetTop,
+        },
+      });
+    }, 16);
   });
 
 // SOCKET COMMUNICATION
