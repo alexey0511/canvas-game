@@ -4,11 +4,12 @@
   "author": "Alexey <om.alex@hotmail.com>",
   "version": "0.0.1",
   "scripts": {
-    "start": "npm run start:client && npm run start:server",
+    "start": "concurrently \"npm:start:*\"",
     "start:client": "tsc -p ./src/client/tsconfig.client.json -w",
     "start:server": "nodemon src/server.ts",
     "format": "prettier -w .",
-    "eslint": "eslint \"src/**/*.ts\""
+    "eslint": "eslint \"src/**/*.ts\"",
+    "eslint:fix": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
     "express": "^4.18.1",
@@ -19,6 +20,7 @@
     "@types/node": "^18.6.5",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
+    "concurrently": "^7.3.0",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
