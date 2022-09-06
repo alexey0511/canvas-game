@@ -9,6 +9,9 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
+  globals: {
+    io: true,
+  },
   plugins: ['@typescript-eslint'],
   rules: {},
 };

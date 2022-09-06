@@ -36,10 +36,6 @@ type State = {
 const App: any = {
   config: {
     canvasId: 'game-canvas',
-    server: {
-      url: 'http://localhost',
-      port: '8000',
-    },
     canvasSize: {
       height: 400,
       width: 800,
@@ -122,7 +118,8 @@ document.getElementById('game-canvas')!.addEventListener('mousemove', function (
 
 // SOCKET COMMUNICATION
 // TODO: declare global io module or maybe just include as part of script
-// @ts-expect-error need to register module
-App.socket = io.connect(`${App.config.server.url}:${App.config.server.port}`); // eslint-disable-line
+declare const io: any;
+
+App.socket = io();
 App.socket.on('stateUpdate', App.redrawFromState);
 App.socket.on('setPlayer', App.setPlayer);
