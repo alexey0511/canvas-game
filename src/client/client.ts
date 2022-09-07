@@ -10,6 +10,7 @@
  *  - import or declare socket.io script
  *  - avoid using any
  */
+console.log('test');
 type Coords = {
   x: number;
   y: number;
