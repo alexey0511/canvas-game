@@ -123,11 +123,18 @@ function updatePuckPosition(puck: Puck, players: Player[]) {
   };
 }
 
+function generateRandomIndex(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 function makePlayer(playerId: string, playersNum: number) {
+  const colors = ['#00C', '#BADA55', '#C00FFE', 'green', 'brown'];
+
+  const randomIndex = generateRandomIndex(0, colors.length - 1);
+
   return {
     id: playerId,
     name: `Player ${playersNum}`,
-    color: 'green',
+    color: colors[randomIndex],
     coords: { x: playersNum * 10, y: playersNum * 20 },
     force: { x: 0, y: 0 },
   };
